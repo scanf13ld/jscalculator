@@ -121,16 +121,19 @@ href= "./assets/css/styles.css">
   </div>
 
     <div id=newevent class="newdate" style="display:none;"> <!-- Pop-Up For New Event -->
-        Title:<input type="text" name = "title"/><br>
+        Title:<input type="text" id = "title"/><br>
+        Date:<input type="number" id="month" placeholder=Month/>
+        <input type="number" id="day" placeholder=Day/>
+        <input type="number" id="year" placeholder=Year/>
         Tag:<br>
         <input type="hidden" name="token" value="<?php echo $_SESSION['token'];?>"/>
-        <input type="radio" name="tag" value="work" id="tech" /><label for="work">Work</label><br>
-        <input type="radio" name="tag" value="school" id="sports" /><label for="school">School</label><br>
-        <input type="radio" name="tag" value="family" id="science" /><label for="family">Family</label><br>
-        <input type="radio" name="tag" value="birthday" id="politics" /><label for="birthday">Birthday</label><br>
+        <input type="radio" name="tag" value="work" id="work" /><label for="work">Work</label><br>
+        <input type="radio" name="tag" value="school" id="school" /><label for="school">School</label><br>
+        <input type="radio" name="tag" value="family" id="family" /><label for="family">Family</label><br>
+        <input type="radio" name="tag" value="birthday" id="birthday" /><label for="birthday">Birthday</label><br>
         <input type="radio" name="tag" value="misc" id="misc" /><label for="misc">Misc</label><br>
 
-        Duration:<br>
+        Repeat:<br>
         <input type="radio" name="duration" value="once" id="once" /><label for="once">Just this once</label><br>
         <input type="radio" name="duration" value="weekly" id="weekly" /><label for="weekly">Weekly</label><br>
         <input type="radio" name="duration" value="biweekly" id="biweekly" /><label for="biweekly">Bi-Weekly</label><br>
@@ -145,11 +148,37 @@ href= "./assets/css/styles.css">
       <script>
 
       document.getElementById("new_event_btn").addEventListener("click", function(event){
-            document.getElementById("newevent").style.display = "block";
-      }, false);
+            document.getElementById("newevent").style.display = "block";}, false);
 
       document.getElementById("cancel").addEventListener("click", function(event){
-            document.getElementById("newevent").style.display = "none";
+            document.getElementById("newevent").style.display = "none";}, false);
+
+      document.getElementById("create").addEventListener("click", function(event){
+          let m = document.getElementById("month");
+          let d = document.getElementById("day");
+          let y = document.getElementById("year");
+          let t = document.getElementById("title");
+          let tag_ptrs = document.getElementsByName("tag");
+          let which_tag = null;
+          for (let i=0; i<tag_ptrs.length; ++i){
+              if(tag_ptrs[i].checked){
+                which_tag = tag_ptrs[i].value;
+                break;
+              }
+          }
+          let dur_ptrs = document.getElementsByName("duration");
+          let dur = null;
+          for (let i=0; i<dur_ptrs.length; ++i){
+              if(dur_ptrs[i].checked){
+                dur = dur_ptrs[i].value;
+                break;
+              }
+          }
+          const data = {month: m, day: d, year: y, title: t, tag: which_tag, duration: dur};
+          fetch("newEvent.php"){
+              method: "POST",
+              body: JSON.stringify(data)
+          }
       }, false);
 
       </script>
