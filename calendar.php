@@ -1,19 +1,14 @@
-<?php
-require 'database.php'; //returns $mysqli which can be used in mysqli_query commands
-session_start();
-if (empty($_SESSION['token'])) {
-    $_SESSION['token'] = bin2hex(random_bytes(32));
-}
-ini_set('display_errors', 1);
-?>
 
 <!DOCTYPE html>
 <html lang=en-US>
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet"
-href= "./assets/CSS/styles.css">
+href= "./assets/css/styles.css">
 <title>Calendar</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://classes.engineering.wustl.edu/cse330/content/calendar.js"></script>
+
 </head>
 <body>
 
@@ -25,82 +20,88 @@ href= "./assets/CSS/styles.css">
 
     <button id='next_month_btn'>Next Month</button>
     <button id='prev_month_btn'>Previous Month</button>
-
-    <table id=Calendar style="border: 1px solid black;">
     <h2>Current Month: <h2>
-    <tr>
-      <th>Sunday</th>
-      <th>Monday</th>
-      <th>Tuesday</th>
-      <th>Wednesday</th>
-      <th>Thursday</th>
-      <th>Friday</th>
-      <th>Saturday</th>
-    </tr>
+    <table id=Calendar style="border: 1px solid black;">
+      <thead>
+        <tr>
+          <th>Sunday</th>
+          <th>Monday</th>
+          <th>Tuesday</th>
+          <th>Wednesday</th>
+          <th>Thursday</th>
+          <th>Friday</th>
+          <th>Saturday</th>
+        </tr>
+      </thead>
+      <tbody>
+        <script>
 
-<script>
+          let currentMonth = new Month(2017, 9);
 
-    let currentMonth = new Month(2017, 9);
+          let weekdays = {
+              'Sunday':1,
+              'Monday':2,
+              'Tuesday':3,
+              'Wednesday':4,
+              'Thursday':5,
+              'Friday':6,
+              'Saturday':7
+          };
 
-    let weekdays = {
-        'Sunday':1,
-        'Monday':2,
-        'Tuesday':3,
-        'Wednesday':4,
-        'Thursday':5,
-        'Friday':6,
-        'Saturday':7
-    };
+          let cal_weeks = ['first','second','third','fourth'];
 
-    let cal_weeks = ['first','second','third','fourth'];
+          function populateCalendar(currentMonth){
+              //let currentMonth = new Month(2021, 2); // March 2021
+              let weeks = currentMonth.getWeeks();
 
-    function populateCalendar(){
+              let date_num = 1;
+              let cal_week = 0;
+              for(var w in weeks){
+                  let week_id = cal_weeks[cal_week];
+                  let days = weeks[w].getDates();
+                  $("table tbody").append('<tr>');
 
-        let calendar = document.getElementById('Calendar'); //get calendar table
-        let currentMonth = new Month(2021, 2); // March 2021
-        let weeks = currentMonth.getWeeks();
-        let date_num = 1;
-        let cal_week = 0;
-        for(var w in weeks){
-            let week_id = cal_weeks[cal_week];
-            var days = weeks[w].getDates();
-            // days contains normal JavaScript Date objects.
-            alert("Week starting on "+days[0]);
-            let startDay = weekdays[days[0]];
-            calendar.innerHTML += '<tr>';
-            for (i = 0; i < startDay; i++){
-                calendar.innerHTML += '<td>$nbsp;</td>';
-                for(var d in days){
-                    calendar.innerHTML += '<td>';
-                    calendar.innerHTML += '<h5 id='+week_id+'>'+date_num+'</h5>';
-                    calendar.innerHTML += '</td>';
-                    date_num += 1;
-                //Search SQL for events on this specific day
-                }
-        calendar.innerHTML += '</tr>';
+                  for(var d in days){
+                      let date = days[d].getDate();
+                      $("table tbody").append('<td><h5 name=day id='+week_id+'>'+date+'</h5></td>');
+                      date_num += 1;
+                  }
+                  $("table tbody").append('</tr>');
+                  cal_weeks += 1;
+              }
+
           }
-        }
-      }
-    // Change the month when the "next" button is pressed
-    document.getElementById("next_month_btn").addEventListener("click", function(event){
-        currentMonth = currentMonth.nextMonth();
-        calendar.innerHTML = ''; //clears calendar
-        updateCalendar();
-        alert("The new month is "+currentMonth.month+" "+currentMonth.year);
-    }, false);
+          function initializeCalendar(){
+            let currentMonth = new Month(2021, 2);
+            populateCalendar(currentMonth);
+          }
 
-    // Change the month when the "previous" button is pressed
-    document.getElementById("prev_month_btn").addEventListener("click", function(event){
-        currentMonth = currentMonth.prevMonth();
-        calendar.innerHTML = ''; //clears calendar
-        updateCalendar();
-        alert("The new month is "+currentMonth.month+" "+currentMonth.year);
-    }, false);
+          function updateCalendar(currentMonth){
+            $("table tbody").find("td").remove();
+            $("table tbody").find("tr").remove();
+            populateCalendar(currentMonth);
+          }
 
-    document.addEventListener("DOMContentLoaded", populateCalendar, false);
+          // Change the month when the "next" button is pressed
+          document.addEventListener("DOMContentLoaded", initializeCalendar, false);
+        </script>
+        <script>
+        document.getElementById("next_month_btn").addEventListener("click", function(event){
+            currentMonth = currentMonth.nextMonth();
+            updateCalendar(currentMonth);
+            alert("The new month is "+currentMonth.month+" "+currentMonth.year);
 
-</script>
-</table>
+        }, false);
+
+        // Change the month when the "previous" button is pressed
+        document.getElementById("prev_month_btn").addEventListener("click", function(event){
+            currentMonth = currentMonth.prevMonth();
+            updateCalendar(currentMonth);
+            alert("The new month is "+currentMonth.month+" "+currentMonth.year);
+        }, false);
+        </script>
+      </tbody>
+    </table>
 
     <div class="calendar-event-editor" style="display:none;"> <!-- Pop-Up For New Event -->
         Title:<input type="text" name = "title"/><br>
@@ -119,33 +120,7 @@ href= "./assets/CSS/styles.css">
         <input type="radio" name="duration" value="biweekly" id="biweekly" /><label for="biweekly">Bi-Weekly</label><br>
         <input type="radio" name="duration" value="monthly" id="monthly" /><label for="monthly">Monthly</label><br>
         <input type="radio" name="duration" value="yearly" id="yearly" /><label for="yearly">Yearly</label><br>
-        <?php
-            if( $_SERVER['REQUEST_METHOD'] === "POST"){
-                if(!hash_equals($_SESSION['token'], $_POST['token'])){  //CSRF token validation
-                    die("Request forgery detected");
-                }
 
-                if($_POST['title'] == ""){
-                    echo "Your story must have a title.";
-                }
-                $safe_title = $mysqli->real_escape_string($_POST['title']); //SQL injection resistant
-
-
-                $stmt = $mysqli->prepare("insert into events (user_id, dt, title, tag_id, duration) values (?, ?, ?, ?, ?)");
-                if(!$stmt){
-                    printf("Post Query Prep Failed: %s\n", $mysqli->error);
-                    exit;
-                }
-
-                $stmt->bind_param('sssss', $_SESSION['username'], $_SESSION['dt'],$safe_title, $_POST['tag_id'], $_POST['duration']);
-
-                $stmt->execute();
-
-                $stmt->close();
-
-                exit;
-            }
-        ?>
       </div>
 
 
