@@ -12,7 +12,7 @@ ini_set('display_errors', 1);
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet"
-href= "./assets/CSS/calendar.css">
+href= "./assets/CSS/styles.css">
 <title>Calendar</title>
 </head>
 <body>
