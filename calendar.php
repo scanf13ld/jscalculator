@@ -27,6 +27,7 @@ href= "./assets/css/styles.css">
 	   
     <button id='prev_month_btn'>Previous Month</button>
     <button id='next_month_btn'>Next Month</button>
+    <br>
     
     <table id=Calendar style="border: 1px solid black;">
       <thead>
