@@ -24,10 +24,10 @@ href= "./assets/css/styles.css">
 
     <div class=table>
     <h2 id=calendarmonth></h2>
-	    
-    <button id='next_month_btn'>Next Month</button>
+	   
     <button id='prev_month_btn'>Previous Month</button>
-	    
+    <button id='next_month_btn'>Next Month</button>
+    
     <table id=Calendar style="border: 1px solid black;">
       <thead>
         <tr>
