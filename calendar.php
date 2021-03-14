@@ -22,11 +22,13 @@ href= "./assets/css/styles.css">
 
     New User:<input type = text id=new_username placeholder='Username'><input type = text id=new_password placeholder='Password'><button id='register'>Register</button>
 
-    <button id='next_month_btn'>Next Month</button>
-    <button id='prev_month_btn'>Previous Month</button>
-
     <div class=table>
     <h2 id=calendarmonth></h2>
+	   
+    <button id='prev_month_btn'>Previous Month</button>
+    <button id='next_month_btn'>Next Month</button>
+    <br>
+    
     <table id=Calendar style="border: 1px solid black;">
       <thead>
         <tr>
