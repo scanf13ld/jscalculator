@@ -40,8 +40,7 @@ href= "./assets/css/styles.css">
       </thead>
       <tbody>
         <script>
-
-          let currentMonth = new Month(2017, 9);
+          let currentMonth = new Month(2021, 2);
 
           let weekdays = {
               'Sunday':1,
