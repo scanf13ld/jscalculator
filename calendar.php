@@ -3,7 +3,6 @@ require 'database.php'; //returns $mysqli which can be used in mysqli_query comm
 session_start();
 ini_set('display_errors', 1);
 ?>
-
 <!DOCTYPE html>
 <html lang=en-US>
 <head>
@@ -25,7 +24,9 @@ href= "./assets/css/styles.css">
 
     <button id='next_month_btn'>Next Month</button>
     <button id='prev_month_btn'>Previous Month</button>
-    <h2>Current Month: <h2>
+
+    <div class=table>
+    <h2 id=calendarmonth></h2>
     <table id=Calendar style="border: 1px solid black;">
       <thead>
         <tr>
@@ -53,10 +54,13 @@ href= "./assets/css/styles.css">
           };
 
           let cal_weeks = ['first','second','third','fourth'];
+          let months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
           function populateCalendar(currentMonth){
               //let currentMonth = new Month(2021, 2); // March 2021
               let weeks = currentMonth.getWeeks();
+              //alert(currentMonth.month);
+              $("#calendarmonth").append('<p>Current Month: '+months[currentMonth.month]+' '+currentMonth.year+'</p>');
 
               let date_num = 1;
               let cal_week = 0;
@@ -83,6 +87,7 @@ href= "./assets/css/styles.css">
           function updateCalendar(currentMonth){
             $("table tbody").find("td").remove();
             $("table tbody").find("tr").remove();
+            $("#calendarmonth").find("p").remove();
             populateCalendar(currentMonth);
           }
 
@@ -103,11 +108,17 @@ href= "./assets/css/styles.css">
             updateCalendar(currentMonth);
             alert("The new month is "+currentMonth.month+" "+currentMonth.year);
         }, false);
+
         </script>
       </tbody>
     </table>
+  </div>
 
-    <div class="calendar-event-editor" style="display:none;"> <!-- Pop-Up For New Event -->
+  <div class=newdate>
+    <button id='new_event_btn'>New Event</button>
+  </div>
+
+    <div id=newevent class="newdate" style="display:none;"> <!-- Pop-Up For New Event -->
         Title:<input type="text" name = "title"/><br>
         Tag:<br>
         <input type="hidden" name="token" value="<?php echo $_SESSION['token'];?>"/>
@@ -116,16 +127,30 @@ href= "./assets/css/styles.css">
         <input type="radio" name="tag" value="family" id="science" /><label for="family">Family</label><br>
         <input type="radio" name="tag" value="birthday" id="politics" /><label for="birthday">Birthday</label><br>
         <input type="radio" name="tag" value="misc" id="misc" /><label for="misc">Misc</label><br>
-        <input type="submit" class = "button" value ="Post"/>
-        <input type="submit" class = "button" value ="Cancel" formaction="calendar.php"/><br>
-        Duration:
+
+        Duration:<br>
         <input type="radio" name="duration" value="once" id="once" /><label for="once">Just this once</label><br>
         <input type="radio" name="duration" value="weekly" id="weekly" /><label for="weekly">Weekly</label><br>
         <input type="radio" name="duration" value="biweekly" id="biweekly" /><label for="biweekly">Bi-Weekly</label><br>
         <input type="radio" name="duration" value="monthly" id="monthly" /><label for="monthly">Monthly</label><br>
         <input type="radio" name="duration" value="yearly" id="yearly" /><label for="yearly">Yearly</label><br>
 
+        <button id='create'>Add</button>
+        <button id='cancel'>Cancel</button>
+
+
       </div>
+      <script>
+
+      document.getElementById("new_event_btn").addEventListener("click", function(event){
+            document.getElementById("newevent").style.display = "block";
+      }, false);
+
+      document.getElementById("cancel").addEventListener("click", function(event){
+            document.getElementById("newevent").style.display = "none";
+      }, false);
+
+      </script>
 
 
 
