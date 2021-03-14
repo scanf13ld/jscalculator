@@ -148,10 +148,12 @@ href= "./assets/css/styles.css">
       <script>
 
       document.getElementById("new_event_btn").addEventListener("click", function(event){
-            document.getElementById("newevent").style.display = "block";}, false);
+            document.getElementById("newevent").style.display = "block";
+      }, false);
 
       document.getElementById("cancel").addEventListener("click", function(event){
-            document.getElementById("newevent").style.display = "none";}, false);
+            document.getElementById("newevent").style.display = "none";
+      }, false);
 
       document.getElementById("create").addEventListener("click", function(event){
           let m = document.getElementById("month");
