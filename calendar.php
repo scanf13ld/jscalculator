@@ -282,11 +282,18 @@ href= "./assets/css/styles.css">
                 break;
               }
           }
-          const data = {month: m, day: d, year: y, title: t, tag: which_tag, duration: dur};
-          fetch("newEvent.php", {
-              method: "POST",
-              body: JSON.stringify(data)
-          })
+          const data = {'month': m.value, 'day': d.value, 'year': y.value, 'title': t.value, 'tag': which_tag, 'duration': dur};
+            $.ajax({    //create an ajax request to display.php
+            type: 'POST',
+            dataType:'json',
+            url: 'newEvent.php',
+            data: data,
+            //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
+            success: function(response){
+                console.log(response);
+                //fillDisplay(response,day,month,year);
+            }
+	    });
       }, false);
 
       </script>
