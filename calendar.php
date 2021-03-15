@@ -228,6 +228,9 @@ href= "./assets/css/styles.css">
 
     <div id=newevent class="newdate" style="display:none;"> <!-- Pop-Up For New Event -->
         Title:<input type="text" name = "title"/><br>
+	Date:<input type="number" id="month" placeholder=Month/>
+        <input type="number" id="day" placeholder=Day/>
+        <input type="number" id="year" placeholder=Year/><br>
         Tag:<br>
         <input type="hidden" name="token" value="<?php echo $_SESSION['token'];?>"/>
         <input type="radio" name="tag" value="work" id="tech" /><label for="work">Work</label><br>
