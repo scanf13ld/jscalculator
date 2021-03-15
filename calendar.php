@@ -236,7 +236,7 @@ href= "./assets/css/styles.css">
         <input type="radio" name="tag" value="birthday" id="politics" /><label for="birthday">Birthday</label><br>
         <input type="radio" name="tag" value="misc" id="misc" /><label for="misc">Misc</label><br>
 
-        Duration:<br>
+        Repeat:<br>
         <input type="radio" name="duration" value="once" id="once" /><label for="once">Just this once</label><br>
         <input type="radio" name="duration" value="weekly" id="weekly" /><label for="weekly">Weekly</label><br>
         <input type="radio" name="duration" value="biweekly" id="biweekly" /><label for="biweekly">Bi-Weekly</label><br>
@@ -256,6 +256,34 @@ href= "./assets/css/styles.css">
 
       document.getElementById("cancel").addEventListener("click", function(event){
             document.getElementById("newevent").style.display = "none";
+      }, false);
+	      
+      document.getElementById("create").addEventListener("click", function(event){
+          let m = document.getElementById("month");
+          let d = document.getElementById("day");
+          let y = document.getElementById("year");
+          let t = document.getElementById("title");
+          let tag_ptrs = document.getElementsByName("tag");
+          let which_tag = null;
+          for (let i=0; i<tag_ptrs.length; ++i){
+              if(tag_ptrs[i].checked){
+                which_tag = tag_ptrs[i].value;
+                break;
+              }
+          }
+          let dur_ptrs = document.getElementsByName("duration");
+          let dur = null;
+          for (let i=0; i<dur_ptrs.length; ++i){
+              if(dur_ptrs[i].checked){
+                dur = dur_ptrs[i].value;
+                break;
+              }
+          }
+          const data = {month: m, day: d, year: y, title: t, tag: which_tag, duration: dur};
+          fetch("newEvent.php", {
+              method: "POST",
+              body: JSON.stringify(data)
+          })
       }, false);
 
       </script>
