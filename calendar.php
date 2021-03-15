@@ -13,20 +13,7 @@ href= "./assets/css/styles.css">
 
  $(document).ready(function() {
 
-    $("#getevents").click(function() {
-      $.ajax({    //create an ajax request to display.php
-        method: "post",
-        url: "getevent.php",
-        dataType: "JSON",   //expect html to be returned
-        success: function(response){
-            console.log(response);
-            populateEvents(response);
-          }
-
-        });
-      });
-
-    $("td").click(function() { //when a day is clicked
+    $(document).on('click','td',function() { //when a day is clicked
       let day_id = $(this).attr('id');
       let split = day_id.split("_");
       let day = split[0];
@@ -53,26 +40,34 @@ href= "./assets/css/styles.css">
     });
     });
 
-  function populateEvents(events){
-    let icons = ['school','home','building','birthday-cake','asterisk']; //0 for school, 1 for home (from database)
-    let len = events.length;
-    for (let i=0; i < len; i++){
-      let event_id = events[i].event_id;
-      let user_id = events[i].user_id;
-      let month = +events[i].month; //adjust
-      let year = events[i].year;
-      let day = events[i].day;
-      let title = events[i].title;
-      let tag_id = events[i].tag_id;
-      if (tag_id==undefined){
-        tag_id = 4;
-      }
-      let icon = icons[tag_id];
-      let id = "#"+day+'_'+month+'_'+year;
-      $(id+'_icons').append("<i class='fas fa-"+icon+"'style='margin: 5px;'></i>");
+  function populateEvents(user){
+    $.ajax({    //create an ajax request to display.php
+      method: "post",
+      url: "getevent.php",
+      dataType: "JSON",   //expect html to be returned
+      success: function(response){
+          console.log(response);
+          let icons = ['school','home','building','birthday-cake','asterisk']; //0 for school, 1 for home (from database)
+          let len = response.length;
+          for (let i=0; i < len; i++){
+            let event_id = response[i].event_id;
+            let user_id = response[i].user_id;
+            let month = response[i].month;
+            let year = response[i].year;
+            let day = response[i].day;
+            let title = response[i].title;
+            let tag_id = response[i].tag_id;
+            if (tag_id==undefined){
+              tag_id = 4;
+            }
+            let icon = icons[tag_id];
+            let id = "#"+day+'_'+month+'_'+year;
+            $(id+'_icons').append("<i class='fas fa-"+icon+"'style='margin: 5px;'></i>");
+          }
+        }
 
+      });
     }
-  }
 
   function fillDisplay(response,day,month,year){
     let month_word = numToWord(month);
@@ -93,6 +88,7 @@ href= "./assets/css/styles.css">
         $('#dayappend').append("<p>"+title+"</p>");
       }
     }
+    //$('#dayappend').append("<div class=newdate><button id='new_event_btn_2'>New Event</button></div>");
   }
 
   function numToWord(month){
@@ -107,16 +103,15 @@ href= "./assets/css/styles.css">
 
 
     <!-- stuff that will show all the time -->
-    Login:<input type = text id=username placeholder='Username'><input type = text id=password placeholder='Password'><button id='login'>Log in</button>
+    Login:<input type = text id=username placeholder='Username'><input type = password id=password placeholder='Password'><button id='login'>Log in</button>
 
-    New User:<input type = text id=new_username placeholder='Username'><input type = text id=new_password placeholder='Password'><button id='register'>Register</button>
+    New User:<input type = text id=new_username placeholder='Username'><input type = password id=new_password placeholder='Password'><button id='register'>Register</button>
 
     <div class=table>
       <h2 id=calendarmonth></h2>
 
       <button id='prev_month_btn'>Previous Month</button>
       <button id='next_month_btn'>Next Month</button>
-      <button id='getevents'>Get Events</button>
       <br>
 
       <table id=Calendar style="border: 1px solid black;">
@@ -170,7 +165,6 @@ href= "./assets/css/styles.css">
                     $("table tbody").append('</tr>');
                     cal_weeks += 1;
                 }
-
             }
             function initializeCalendar(){
               let currentMonth = new Month(2021, 2);
@@ -178,10 +172,12 @@ href= "./assets/css/styles.css">
             }
 
             function updateCalendar(currentMonth){
+              //$("table tbody td span").find("i").remove();
               $("table tbody").find("td").remove();
               $("table tbody").find("tr").remove();
               $("#calendarmonth").find("p").remove();
               populateCalendar(currentMonth);
+              populateEvents(<?php echo $_SESSION["username"]; ?>);
             }
 
             // Change the month when the "next" button is pressed
@@ -202,6 +198,47 @@ href= "./assets/css/styles.css">
               alert("The new month is "+currentMonth.month+" "+currentMonth.year);
           }, false);
 
+          document.getElementById("register").addEventListener("click", function(event){
+
+            let user = document.getElementById("new_username").value;
+            let pass = document.getElementById("new_password").value;
+            alert(user);
+            alert(pass);
+            let data = { "username": user, "password": pass};
+            $.ajax({    //create an ajax request to display.php
+                type: 'POST',
+                dataType:'json',
+                url: 'newuser.php',
+                data: data,
+                //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
+              success: function(response){
+                  console.log(response);
+                  //fillDisplay(response,day,month,year);
+                }
+
+              });
+          }, false);
+
+          document.getElementById("login").addEventListener("click", function(event){
+
+            let user = document.getElementById("username").value;
+            let pass = document.getElementById("password").value;
+            let data = { "username": user, "password": pass};
+            $.ajax({    //create an ajax request to display.php
+                type: 'POST',
+                dataType:'json',
+                url: 'verifyaccount.php',
+                data: data,
+                //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
+              success: function(response){
+                  console.log(response);
+                  updateCalendar(currentMonth);
+                  //fillDisplay(response,day,month,year);
+                }
+
+              });
+          }, false);
+
           </script>
         </tbody>
       </table>
@@ -212,6 +249,7 @@ href= "./assets/css/styles.css">
       <span class="close">&times;</span>
 
     </div>
+
     <script>
         let span = document.getElementsByClassName("close")[0];
         let popup = document.getElementById("displayevent");
@@ -220,6 +258,7 @@ href= "./assets/css/styles.css">
           $('#dayappend').find('p').remove();
         }
     </script>
+
   </div>
 
   <div class=newdate>
@@ -228,15 +267,16 @@ href= "./assets/css/styles.css">
 
     <div id=newevent class="newdate" style="display:none;"> <!-- Pop-Up For New Event -->
         Title:<input type="text" name = "title"/><br>
-	Date:<input type="number" id="month" placeholder=Month/>
+        Date: <input type="time" id="time" placeholder=Time/>
+        <input type="number" id="month" placeholder=Month/>
         <input type="number" id="day" placeholder=Day/>
         <input type="number" id="year" placeholder=Year/><br>
         Tag:<br>
         <input type="hidden" name="token" value="<?php echo $_SESSION['token'];?>"/>
-        <input type="radio" name="tag" value="work" id="tech" /><label for="work">Work</label><br>
-        <input type="radio" name="tag" value="school" id="sports" /><label for="school">School</label><br>
-        <input type="radio" name="tag" value="family" id="science" /><label for="family">Family</label><br>
-        <input type="radio" name="tag" value="birthday" id="politics" /><label for="birthday">Birthday</label><br>
+        <input type="radio" name="tag" value="work" id="work" /><label for="work">Work</label><br>
+        <input type="radio" name="tag" value="school" id="school" /><label for="school">School</label><br>
+        <input type="radio" name="tag" value="family" id="family" /><label for="family">Family</label><br>
+        <input type="radio" name="tag" value="birthday" id="birthday" /><label for="birthday">Birthday</label><br>
         <input type="radio" name="tag" value="misc" id="misc" /><label for="misc">Misc</label><br>
 
         Repeat:<br>
@@ -260,8 +300,9 @@ href= "./assets/css/styles.css">
       document.getElementById("cancel").addEventListener("click", function(event){
             document.getElementById("newevent").style.display = "none";
       }, false);
-	      
+
       document.getElementById("create").addEventListener("click", function(event){
+          let time = document.getElementById("time");
           let m = document.getElementById("month");
           let d = document.getElementById("day");
           let y = document.getElementById("year");
@@ -282,7 +323,7 @@ href= "./assets/css/styles.css">
                 break;
               }
           }
-          const data = {'month': m.value, 'day': d.value, 'year': y.value, 'title': t.value, 'tag': which_tag, 'duration': dur};
+          const data = {'time':time.value, 'month': m.value, 'day': d.value, 'year': y.value, 'title': t.value, 'tag': which_tag, 'duration': dur};
             $.ajax({    //create an ajax request to display.php
             type: 'POST',
             dataType:'json',

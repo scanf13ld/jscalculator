@@ -7,7 +7,7 @@ if (empty($_SESSION['token'])) {
 ini_set('display_errors', 1);
 
 
-$user_id = 1;
+$user_id = $_SESSION["username"];
 
 $output_arr = array();
 
@@ -16,7 +16,7 @@ if ($_POST){
   $month = $_POST['month_ajax'];
   $year = $_POST['year_ajax'];
 
-  $sql = "SELECT event_id, title, tag_id FROM events WHERE day='". $day ."' AND month='". $month ."' AND year='". $year ."' AND user_id='shane'";
+  $sql = "SELECT event_id, title, tag_id FROM events WHERE day='". $day ."' AND month='". $month ."' AND year='". $year ."' AND user_id='". $user_id ."'";
   $result = mysqli_query($mysqli, $sql);
   while($row = mysqli_fetch_assoc($result)) {
 
@@ -27,7 +27,7 @@ if ($_POST){
 }
 
 else{ //populating icons
-  $sql = "SELECT event_id, user_id, month, year, day, title, tag_id FROM events WHERE user_id='shane'";
+  $sql = "SELECT event_id, user_id, month, year, day, title, tag_id FROM events WHERE user_id='". $user_id ."'";
   $result = mysqli_query($mysqli, $sql);
 
   while($row = mysqli_fetch_assoc($result)) {
