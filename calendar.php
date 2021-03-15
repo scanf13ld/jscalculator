@@ -178,7 +178,6 @@ href= "./assets/css/styles.css">
           fetch("newEvent.php", {
               method: "POST",
               body: JSON.stringify(data)
-          }
       });
 
       </script>
