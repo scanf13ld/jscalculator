@@ -175,11 +175,11 @@ href= "./assets/css/styles.css">
               }
           }
           const data = {month: m, day: d, year: y, title: t, tag: which_tag, duration: dur};
-          fetch("newEvent.php"){
+          fetch("newEvent.php", {
               method: "POST",
               body: JSON.stringify(data)
           }
-      }, false);
+      });
 
       </script>
 
