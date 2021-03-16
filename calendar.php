@@ -106,6 +106,8 @@ href= "./assets/css/styles.css">
 
     New User:<input type = text id=new_username placeholder='Username'><input type = password id=new_password placeholder='Password'><button id='register'>Register</button>
 
+    <p id="login_messages"></p>
+
     <div class=table>
       <h2 id=calendarmonth></h2>
 
@@ -166,8 +168,9 @@ href= "./assets/css/styles.css">
                 }
             }
             function initializeCalendar(){
-              let currentMonth = new Month(2021, 2);
-              populateCalendar(currentMonth);
+                document.getElementById("new_event_btn").style.display = "none";
+                let currentMonth = new Month(2021, 2);
+                populateCalendar(currentMonth);
             }
 
             function updateCalendar(currentMonth){
@@ -208,6 +211,7 @@ href= "./assets/css/styles.css">
                 //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
               success: function(response){
                   console.log(response);
+                  document.getElementById("login_messages").innerHTML = "New User Added! Log in to start adding events.";
                   //fillDisplay(response,day,month,year);
                 }
 
@@ -228,6 +232,8 @@ href= "./assets/css/styles.css">
               success: function(response){
                   console.log(response);
                   updateCalendar(currentMonth);
+                  document.getElementById("login_messages").innerHTML = "Login Successful";
+                  document.getElementById("new_event_btn").style.display = "block";
                   //fillDisplay(response,day,month,year);
                 }
 
