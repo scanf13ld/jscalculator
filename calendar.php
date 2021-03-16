@@ -186,7 +186,6 @@ href= "./assets/css/styles.css">
           document.getElementById("next_month_btn").addEventListener("click", function(event){
               currentMonth = currentMonth.nextMonth();
               updateCalendar(currentMonth);
-              alert("The new month is "+currentMonth.month+" "+currentMonth.year);
 
           }, false);
 
@@ -194,7 +193,6 @@ href= "./assets/css/styles.css">
           document.getElementById("prev_month_btn").addEventListener("click", function(event){
               currentMonth = currentMonth.prevMonth();
               updateCalendar(currentMonth);
-              alert("The new month is "+currentMonth.month+" "+currentMonth.year);
           }, false);
 
           document.getElementById("register").addEventListener("click", function(event){
@@ -270,18 +268,18 @@ href= "./assets/css/styles.css">
         <input type="number" id="year" placeholder=Year/><br>
         Tag:<br>
         <input type="hidden" name="token" value="<?php echo $_SESSION['token'];?>"/>
-        <input type="radio" name="tag" value="work" id="work" /><label for="work">Work</label><br>
-        <input type="radio" name="tag" value="school" id="school" /><label for="school">School</label><br>
-        <input type="radio" name="tag" value="family" id="family" /><label for="family">Family</label><br>
-        <input type="radio" name="tag" value="birthday" id="birthday" /><label for="birthday">Birthday</label><br>
-        <input type="radio" name="tag" value="misc" id="misc" /><label for="misc">Misc</label><br>
+        <input type="radio" name="tag" value="2" id="work" /><label for="work">Work</label><br>
+        <input type="radio" name="tag" value="0" id="school" /><label for="school">School</label><br>
+        <input type="radio" name="tag" value="1" id="family" /><label for="family">Family</label><br>
+        <input type="radio" name="tag" value="3" id="birthday" /><label for="birthday">Birthday</label><br>
+        <input type="radio" name="tag" value="4" id="misc" /><label for="misc">Misc</label><br>
 
         Repeat:<br>
         <input type="radio" name="duration" value="once" id="once" /><label for="once">Just this once</label><br>
         <input type="radio" name="duration" value="weekly" id="weekly" /><label for="weekly">Weekly</label><br>
-        <input type="radio" name="duration" value="biweekly" id="biweekly" /><label for="biweekly">Bi-Weekly</label><br>
         <input type="radio" name="duration" value="monthly" id="monthly" /><label for="monthly">Monthly</label><br>
         <input type="radio" name="duration" value="yearly" id="yearly" /><label for="yearly">Yearly</label><br>
+        Repeat <input type="number" id="num_repeats"/> times
 
         <button id='create'>Add</button>
         <button id='cancel'>Cancel</button>
@@ -304,6 +302,7 @@ href= "./assets/css/styles.css">
         let d = document.getElementById("day").value;
         let y = document.getElementById("year").value;
         let t = document.getElementById("title").value;
+        let nr = document.getElementById("num_repeats").value;
         if (m == null || d == null || y == null || t == null || time == null){
             //print message that says you must put in a title, date, time
         }
@@ -323,7 +322,7 @@ href= "./assets/css/styles.css">
             break;
             }
         }
-        const data = {'time': time, 'month': m, 'day': d, 'year': y, 'title': t, 'tag': which_tag, 'duration': dur};
+        const data = {'time': time, 'month': m, 'day': d, 'year': y, 'title': t, 'tag': which_tag, 'duration': dur, 'num_repeats': nr};
         $.ajax({    //create an ajax request to display.php
         type: 'POST',
         dataType:'json',
