@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang=en-US>
 <head>
@@ -40,7 +39,7 @@ href= "./assets/css/styles.css">
     });
     });
 
-  function populateEvents(user){
+  function populateEvents(){
     $.ajax({    //create an ajax request to display.php
       method: "post",
       url: "getevent.php",
@@ -177,7 +176,7 @@ href= "./assets/css/styles.css">
               $("table tbody").find("tr").remove();
               $("#calendarmonth").find("p").remove();
               populateCalendar(currentMonth);
-              populateEvents(<?php echo $_SESSION["username"]; ?>);
+              populateEvents();
             }
 
             // Change the month when the "next" button is pressed
@@ -300,39 +299,41 @@ href= "./assets/css/styles.css">
       }, false);
 
       document.getElementById("create").addEventListener("click", function(event){
-            let time = document.getElementById("time");
-            let m = document.getElementById("month");
-            let d = document.getElementById("day");
-            let y = document.getElementById("year");
-            let t = document.getElementById("title");
-            let tag_ptrs = document.getElementsByName("tag");
-            let which_tag = null;
-            for (let i=0; i<tag_ptrs.length; ++i){
-                if(tag_ptrs[i].checked){
-                    which_tag = tag_ptrs[i].value;
-                    break;
-                }
-            }
-            let dur_ptrs = document.getElementsByName("duration");
-            let dur = null;
-            for (let i=0; i<dur_ptrs.length; ++i){
-                if(dur_ptrs[i].checked){
-                dur = dur_ptrs[i].value;
+        let time = document.getElementById("time").value;
+        let m = document.getElementById("month").value;
+        let d = document.getElementById("day").value;
+        let y = document.getElementById("year").value;
+        let t = document.getElementById("title").value;
+        if (m == null || d == null || y == null || t == null || time == null){
+            //print message that says you must put in a title, date, time
+        }
+        let tag_ptrs = document.getElementsByName("tag");
+        let which_tag = null;
+        for (let i=0; i<tag_ptrs.length; ++i){
+            if(tag_ptrs[i].checked){
+                which_tag = tag_ptrs[i].value;
                 break;
-                }
             }
-            const data = {'time': time.value, 'month': m.value, 'day': d.value, 'year': y.value, 'title': t.value, 'tag': which_tag, 'duration': dur};
-            $.ajax({    //create an ajax request to display.php
-            type: 'POST',
-            dataType:'json',
-            url: 'newEvent.php',
-            data: data,
-            //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
-            success: function(response){
-                console.log(response);
-                //fillDisplay(response,day,month,year);
+        }
+        let dur_ptrs = document.getElementsByName("duration");
+        let dur = null;
+        for (let i=0; i<dur_ptrs.length; ++i){
+            if(dur_ptrs[i].checked){
+            dur = dur_ptrs[i].value;
+            break;
             }
-	    });
+        }
+        const data = {'time': time, 'month': m, 'day': d, 'year': y, 'title': t, 'tag': which_tag, 'duration': dur};
+        $.ajax({    //create an ajax request to display.php
+        type: 'POST',
+        dataType:'json',
+        url: 'newEvent.php',
+        data: data,
+        success: function(response){
+            console.log(response);
+            updateCalendar(currentMonth);
+        }
+    });
       }, false);
 
       </script>
