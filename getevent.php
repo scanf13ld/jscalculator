@@ -21,8 +21,8 @@ if ($_POST){
   while($row = mysqli_fetch_assoc($result)) {
 
     $output_arr[] = array("event_id" => $row['event_id'],
-                  "title" => $row['title'],
-                  "tag_id" => $row['tag_id']);
+    "title" => $row['title'],
+    "tag_id" => $row['tag_id']);
   }
 }
 
@@ -33,12 +33,12 @@ else{ //populating icons
   while($row = mysqli_fetch_assoc($result)) {
 
     $output_arr[] = array("event_id" => $row['event_id'],
-                  "user_id" => $row['user_id'],
-                  "year" => $row['year'],
-                  "month" => $row['month'],
-                  "day" => $row['day'],
-                  "title" => $row['title'],
-                  "tag_id" => $row['tag_id']);
+    "user_id" => $row['user_id'],
+    "year" => $row['year'],
+    "month" => $row['month'],
+    "day" => $row['day'],
+    "title" => $row['title'],
+    "tag_id" => $row['tag_id']);
     }
 
 }

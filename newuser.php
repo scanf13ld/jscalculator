@@ -28,7 +28,7 @@ ini_set('display_errors', 1);
 
         //echo "<ul>\n";
         while($row = $result->fetch_assoc()){                       //make sure someone else doesn't already have that username
-            if ($row == $_SESSION['username']){
+            if ($row == $safe_username){
                 echo json_encode("This user already exists!");
                 //header("Location: index.php");
                 exit;
