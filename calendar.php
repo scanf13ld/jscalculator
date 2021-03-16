@@ -202,8 +202,6 @@ href= "./assets/css/styles.css">
 
             let user = document.getElementById("new_username").value;
             let pass = document.getElementById("new_password").value;
-            alert(user);
-            alert(pass);
             let data = { "username": user, "password": pass};
             $.ajax({    //create an ajax request to display.php
                 type: 'POST',
@@ -266,7 +264,7 @@ href= "./assets/css/styles.css">
   </div>
 
     <div id=newevent class="newdate" style="display:none;"> <!-- Pop-Up For New Event -->
-        Title:<input type="text" name = "title"/><br>
+        Title:<input type="text" id = "title"/><br>
         Date: <input type="time" id="time" placeholder=Time/>
         <input type="number" id="month" placeholder=Month/>
         <input type="number" id="day" placeholder=Day/>
@@ -302,28 +300,28 @@ href= "./assets/css/styles.css">
       }, false);
 
       document.getElementById("create").addEventListener("click", function(event){
-          let time = document.getElementById("time");
-          let m = document.getElementById("month");
-          let d = document.getElementById("day");
-          let y = document.getElementById("year");
-          let t = document.getElementById("title");
-          let tag_ptrs = document.getElementsByName("tag");
-          let which_tag = null;
-          for (let i=0; i<tag_ptrs.length; ++i){
-              if(tag_ptrs[i].checked){
-                which_tag = tag_ptrs[i].value;
-                break;
-              }
-          }
-          let dur_ptrs = document.getElementsByName("duration");
-          let dur = null;
-          for (let i=0; i<dur_ptrs.length; ++i){
-              if(dur_ptrs[i].checked){
+            let time = document.getElementById("time");
+            let m = document.getElementById("month");
+            let d = document.getElementById("day");
+            let y = document.getElementById("year");
+            let t = document.getElementById("title");
+            let tag_ptrs = document.getElementsByName("tag");
+            let which_tag = null;
+            for (let i=0; i<tag_ptrs.length; ++i){
+                if(tag_ptrs[i].checked){
+                    which_tag = tag_ptrs[i].value;
+                    break;
+                }
+            }
+            let dur_ptrs = document.getElementsByName("duration");
+            let dur = null;
+            for (let i=0; i<dur_ptrs.length; ++i){
+                if(dur_ptrs[i].checked){
                 dur = dur_ptrs[i].value;
                 break;
-              }
-          }
-          const data = {'time':time.value, 'month': m.value, 'day': d.value, 'year': y.value, 'title': t.value, 'tag': which_tag, 'duration': dur};
+                }
+            }
+            const data = {'time': time.value, 'month': m.value, 'day': d.value, 'year': y.value, 'title': t.value, 'tag': which_tag, 'duration': dur};
             $.ajax({    //create an ajax request to display.php
             type: 'POST',
             dataType:'json',
