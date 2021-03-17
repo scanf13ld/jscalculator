@@ -4,8 +4,11 @@ ini_set("session.cookie_httponly", 1);
 session_start();
 ini_set('display_errors', 1);
 
-
-$user_id = $_SESSION['username'];
+if (isset($_SESSION['username'])){
+  $user_id = $_SESSION['username'];
+} else{ //$user_id == "guest"
+  $user_id = "guest";
+}
 
 if ($user_id == "guest"){
   echo json_encode("Please sign in to make a new event!");
