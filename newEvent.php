@@ -20,6 +20,10 @@ ini_set('display_errors', 1);
     $dur = $mysqli->real_escape_string($_POST['duration']);
     $num_repeats = $_POST['num_repeats'];                       //doesn't have to be injection resistant bc it's not going in database
 
+    if ($m == null || $d == null || $y == null || $t == null || $time == null){
+        echo json_encode("You must enter a title, month, day, year, and time.");
+    }
+
     if($m < 0 || $m > 11){
         echo json_encode("Please enter a valid month.");
     }
