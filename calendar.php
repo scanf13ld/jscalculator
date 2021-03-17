@@ -163,7 +163,7 @@ let months = ['January','February','March','April','May','June','July','August',
         type: 'POST',
         dataType:'json',
         url: 'deleteevent.php',
-        data: {"event_id":event_id,"token":'<?php echo htmlentities($_SESSION['token']);?>'},
+        data: {"event_id":event_id,"token":'<?php if (isset($_SESSION['token'])){ echo htmlentities($_SESSION['token']);}else{echo 'null';}?>'},
         //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
       success: function(response){
           console.log(response);
@@ -359,16 +359,16 @@ let months = ['January','February','March','April','May','June','July','August',
             break;
           }
       }
-      const data = {'token':'<?php echo htmlentities($_SESSION['token']);?>', 'time': time, 'month': m, 'day': d, 'year': y, 'title': t, 'tag': which_tag, 'duration': dur, 'num_repeats': nr};
+      const data = {"token":'<?php if (isset($_SESSION['token'])){ echo htmlentities($_SESSION['token']);}else{echo 'null';}?>', 'time': time, 'month': m, 'day': d, 'year': y, 'title': t, 'tag': which_tag, 'duration': dur, 'num_repeats': nr};
         $.ajax({    //create an ajax request to display.php
         type: 'POST',
         dataType:'json',
         url: 'newEvent.php',
         data: data,
+        //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
         success: function(response){
 
             console.log(response);
-	    document.getElementById("new_event_msg").innerHTML = response;
             updateCalendar(currentMonth);
         }
   });
@@ -405,12 +405,13 @@ let months = ['January','February','March','April','May','June','July','August',
           break;
         }
     }
-    const data = {'token':'<?php echo htmlentities($_SESSION['token']);?>', 'event_id':event_id, 'time': time_edit, 'month': m_edit, 'day': d_edit, 'year': y_edit, 'title': t_edit, 'tag': which_tag_edit, 'duration': dur_edit, 'num_repeats': nr_edit};
+    const data = {'token':'<?php if (isset($_SESSION['token'])){ echo htmlentities($_SESSION['token']);}else{echo 'null';}?>', 'event_id':event_id, 'time': time_edit, 'month': m_edit, 'day': d_edit, 'year': y_edit, 'title': t_edit, 'tag': which_tag_edit, 'duration': dur_edit, 'num_repeats': nr_edit};
       $.ajax({    //create an ajax request to display.php
       type: 'POST',
       dataType:'json',
       url: 'editevent.php',
       data: data,
+      //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
       success: function(response){
 
           console.log(response);
@@ -558,7 +559,6 @@ let months = ['January','February','March','April','May','June','July','August',
   <div class=newdate>
     <button id='new_event_btn'>New Event</button>
   </div>
-  <p id='new_event_msg'></p>
 
     <div id=newevent class="newdate" style="display:none;"> <!-- Pop-Up For New Event -->
         Title:<input type="text" id= "title" name = "title"/><br>
