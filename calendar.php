@@ -341,9 +341,7 @@ let months = ['January','February','March','April','May','June','July','August',
       let y = document.getElementById("year").value;
       let t = document.getElementById("title").value;
       let nr = document.getElementById("num_repeats").value;
-      if (m == null || d == null || y == null || t == null || time == null){
-          //print message that says you must put in a title, date, time
-      }
+	  
       let tag_ptrs = document.getElementsByName("tag");
       let which_tag = null;
       for (let i=0; i<tag_ptrs.length; ++i){
@@ -370,6 +368,7 @@ let months = ['January','February','March','April','May','June','July','August',
         success: function(response){
 
             console.log(response);
+	    document.getElementById("new_event_msg").innerHTML = response;
             updateCalendar(currentMonth);
         }
   });
@@ -560,6 +559,7 @@ let months = ['January','February','March','April','May','June','July','August',
   <div class=newdate>
     <button id='new_event_btn'>New Event</button>
   </div>
+  <p id='new_event_msg'></p>
 
     <div id=newevent class="newdate" style="display:none;"> <!-- Pop-Up For New Event -->
         Title:<input type="text" id= "title" name = "title"/><br>
