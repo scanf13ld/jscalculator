@@ -341,9 +341,7 @@ let months = ['January','February','March','April','May','June','July','August',
       let y = document.getElementById("year").value;
       let t = document.getElementById("title").value;
       let nr = document.getElementById("num_repeats").value;
-      if (m == null || d == null || y == null || t == null || time == null){
-          //print message that says you must put in a title, date, time
-      }
+
       let tag_ptrs = document.getElementsByName("tag");
       let which_tag = null;
       for (let i=0; i<tag_ptrs.length; ++i){
@@ -386,11 +384,6 @@ let months = ['January','February','March','April','May','June','July','August',
     let nr_edit = document.getElementById("num_repeats_edit").value;
     let event_id = document.getElementById("event_id").value;
 
-    alert(event_id);
-
-    if (m_edit == null || d_edit == null || y_edit == null || t_edit == null || time_edit == null){
-        //print message that says you must put in a title, date, time
-    }
     let tag_ptrs_edit = document.getElementsByName("tag_edit");
     let which_tag_edit = null;
     for (let i=0; i<tag_ptrs_edit.length; ++i){
@@ -417,6 +410,7 @@ let months = ['January','February','March','April','May','June','July','August',
       success: function(response){
 
           console.log(response);
+          document.getElementById("day_messages").innerHTML = response;
       }
       });
     $("#newevent2").find('input').each(function(){
@@ -424,9 +418,8 @@ let months = ['January','February','March','April','May','June','July','August',
     });
 
     updateCalendar(currentMonth);
-    document.getElementById("day_messages").innerHTML = "Event edit successful";
-    document.getElementById("cancel_edit").click();
-    document.getElementsByClassName("close")[0].click();
+    //document.getElementById("cancel_edit").click();
+    //document.getElementsByClassName("close")[0].click();
     //showDay(event_id);
   }, false);
 
