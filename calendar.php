@@ -39,16 +39,15 @@ let months = ['January','February','March','April','May','June','July','August',
       showDay($(this).attr('id'));
     });
 
+    //Hides icons based on checkbox in filterbar
   $(document).on('click','#filter',function() {
     $(this).find("input").each( function(){
       if($(this).is(":checked")) {
-        let icon_class = $(this).attr("id"); //ie icon_class = fa fa-school  (see line 104)
+        let icon_class = $(this).attr("id");
         $('.'+icon_class).show();
       } else{
         let icon_class = $(this).attr("id");
-        //alert("hiding "+icon_class);
-        //alert('.'+icon_class);
-        $('.'+icon_class).hide(); //hide elements - not working
+        $('.'+icon_class).hide();
       }
 
     });
@@ -135,7 +134,7 @@ let months = ['January','February','March','April','May','June','July','August',
           let delete_id = "delete_"+event_id+"";
           let icon = icons[tag_id];
           if (user_id == currentUser){ //if user is the creator of the event
-            $('#dayappend').append("<p>"+title+"&emsp;"+time+"&emsp;"+dur+"&emsp;<button id="+edit_id+">Edit</button><button id="+delete_id+">Delete</button></p>");
+            $('#dayappend').append("<p>"+user_id+"&emsp;"+title+"&emsp;"+time+"&emsp;"+dur+"&emsp;<button id="+edit_id+">Edit</button><button id="+delete_id+">Delete</button></p>");
             let edit_event = document.getElementById(edit_id);
             edit_event.onclick = function(event){
                 document.getElementById("newevent2").style.display = "block";
@@ -148,7 +147,7 @@ let months = ['January','February','March','April','May','June','July','August',
                 document.getElementById("day_messages").innerHTML = "Event deletion successful";
             }
           }else { //can only view
-            $('#dayappend').append("<p>"+title+"&emsp;"+time+"&emsp;"+dur+"&emsp;</p>");
+            $('#dayappend').append("<p>"+user_id+"&emsp;"+title+"&emsp;"+time+"&emsp;"+dur+"&emsp;</p>");
           }
 
 
@@ -332,6 +331,7 @@ let months = ['January','February','March','April','May','June','July','August',
 
   document.getElementById("cancel").addEventListener("click", function(event){
         document.getElementById("newevent").style.display = "none";
+        document.getElementById("new_event_msg").innerHTML = "";
   }, false);
 
   document.getElementById("create").addEventListener("click", function(event){
@@ -341,7 +341,9 @@ let months = ['January','February','March','April','May','June','July','August',
       let y = document.getElementById("year").value;
       let t = document.getElementById("title").value;
       let nr = document.getElementById("num_repeats").value;
-	  
+      if (m == null || d == null || y == null || t == null || time == null){
+          //print message that says you must put in a title, date, time
+      }
       let tag_ptrs = document.getElementsByName("tag");
       let which_tag = null;
       for (let i=0; i<tag_ptrs.length; ++i){
@@ -368,8 +370,8 @@ let months = ['January','February','March','April','May','June','July','August',
         success: function(response){
 
             console.log(response);
-	    document.getElementById("new_event_msg").innerHTML = response;
             updateCalendar(currentMonth);
+            document.getElementById("new_event_msg").innerHTML = response;
         }
   });
   }, false);
@@ -490,6 +492,8 @@ let months = ['January','February','March','April','May','June','July','August',
       <br>
 
 
+
+
       <div id=filter style="display:none;">
         <p>
         Show: <input type="checkbox" id="fa-building" checked/>Work
@@ -526,10 +530,10 @@ let months = ['January','February','March','April','May','June','July','August',
 
       <div id=newevent2 class="newdate" style="display:none;"> <!-- Pop-Up for Editing Event -->
           Title:<input type="text" id= "title_edit" name = "title"/><br>
-          Date: <input type="time" id="time_edit" placeholder=Time/>
-          <input type="number" id="month_edit" placeholder=Month/>
-          <input type="number" id="day_edit" placeholder=Day/>
-          <input type="number" id="year_edit" placeholder=Year/><br>
+          Date: <input type="time" id="time_edit" placeholder=Time>
+          <input type="number" id="month_edit" placeholder=Month>
+          <input type="number" id="day_edit" placeholder=Day>
+          <input type="number" id="year_edit" placeholder=Year><br>
           Tag:<br>
           <input type="hidden" name="token" value="<?php echo htmlentities($_SESSION['token']);?>"/>
           <input type="radio" name="tag_edit" value="2" id="work_edit" /><label for="work">Work</label><br>
@@ -568,7 +572,7 @@ let months = ['January','February','March','April','May','June','July','August',
         <input type="number" id="day" placeholder=Day/>
         <input type="number" id="year" placeholder=Year/><br>
         Tag:<br>
-        <input type="hidden" name="token" value="<?php echo $_SESSION['token'];?>"/>
+        <input type="hidden" name="token" value="<?php echo htmlentities($_SESSION['token']);?>"/>
         <input type="radio" name="tag" value="2" id="work" /><label for="work">Work</label><br>
         <input type="radio" name="tag" value="0" id="school" /><label for="school">School</label><br>
         <input type="radio" name="tag" value="1" id="family" /><label for="family">Family</label><br>

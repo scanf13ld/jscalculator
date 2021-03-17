@@ -11,7 +11,7 @@ if (isset($_SESSION['username'])){
 }
 
 if ($user_id == "guest"){
-  echo json_encode("Please sign in to make a new event!");
+  echo json_encode(htmlentities("Please sign in to make a new event!"));
 
 }
 

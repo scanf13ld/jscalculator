@@ -10,7 +10,7 @@ ini_set('display_errors', 1);
 if ($_POST){
 
   if(!hash_equals($_SESSION['token'], $_POST['token'])){  //CSRF token validation
-      die("Request forgery detected");
+      die(htmlentities("Request forgery detected"));
   }
 
   $event_id = $_POST['event_id'];
@@ -18,7 +18,7 @@ if ($_POST){
   $stmt = $mysqli->prepare("DELETE FROM events WHERE events.event_id=?");
 
   if(!$stmt){
-      echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
+      echo json_encode(htmlentities("Query Prep Failed: %s\n", $mysqli->error));
       exit;
   }
 
@@ -28,7 +28,7 @@ if ($_POST){
 
   $stmt->close();
 
-  echo json_encode("Event successfully deleted.");
+  echo json_encode(htmlentities("Event successfully deleted."));
 }
 
  ?>

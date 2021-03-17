@@ -8,7 +8,7 @@ ini_set('display_errors', 1);
         $_SESSION['username'] = (string) $_POST["username"];
         $hpass = password_hash((string) $_POST["password"], PASSWORD_DEFAULT);
         if($_SESSION['username'] == "" || $hpass == ""){
-            echo json_encode("You must input a username and password to create new user!");
+            echo json_encode(htmlentities("You must input a username and password to create new user!"));
           //  header("Location: index.php");
             exit;
         }
@@ -18,7 +18,7 @@ ini_set('display_errors', 1);
         //
         $stmt = $mysqli->prepare("select user_id from users");      //get list of usernames
         if(!$stmt){
-            echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
+            echo json_encode(htmlentities("Query Prep Failed: %s\n", $mysqli->error));
             exit;
         }
 
@@ -43,7 +43,7 @@ ini_set('display_errors', 1);
         //}
         $stmt = $mysqli->prepare("insert into users (user_id, hash_pass) values (?, ?)");
         if(!$stmt){
-            echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
+            echo json_encode(htmlentities("Query Prep Failed: %s\n", $mysqli->error));
             exit;
         }
 
@@ -54,6 +54,6 @@ ini_set('display_errors', 1);
         $stmt->close();
 
         //header("Location: storyfeed.php");      //redirect to the storyfeed
-        echo json_encode("User added!");
+        echo json_encode(htmlentities("User added!"));
 
 ?>

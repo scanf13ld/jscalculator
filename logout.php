@@ -8,6 +8,6 @@ ini_set('display_errors', 1);
 
 $_SESSION['username'] = 'guest';
 
-echo json_encode($user+" successfully logged out.");
+echo json_encode(htmlentities($user+" successfully logged out."));
 
 ?>

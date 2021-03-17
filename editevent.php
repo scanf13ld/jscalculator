@@ -12,7 +12,7 @@ function deleteEvent($event_id) {
   $stmt = $mysqli->prepare("DELETE FROM events WHERE events.event_id=?");
 
   if(!$stmt){
-      echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
+      echo json_encode(htmlentities("Query Prep Failed: %s\n", $mysqli->error));
       exit;
   }
 
@@ -40,21 +40,21 @@ if ($_POST){
   $num_repeats = $_POST['num_repeats'];                       //doesn't have to be injection resistant bc it's not going in database
 
   if($m < 0 || $m > 11){
-      echo json_encode("Please enter a valid month.");
+      echo json_encode(htmlentities("Please enter a valid month."));
   }
 
   if($m == 1 && ($d > 28 || $d < 0)){
-      echo json_encode("That date does not exist.");
+      echo json_encode(htmlentities("That date does not exist."));
   }
 
   if($m == 3 || $m == 5 || $m == 8 || $m == 10){              //months with 30 days
       if($d > 30 || $d < 0){
-          echo json_encode("That date does not exist.");
+          echo json_encode(htmlentities("That date does not exist."));
       }
   }
   else{
       if ($d > 31 || $d < 0){
-          echo json_encode("That date does not exist.");
+          echo json_encode(htmlentities("That date does not exist."));
       }
   }
 
@@ -64,7 +64,7 @@ if ($_POST){
           $stmt = $mysqli->prepare("insert into events (user_id, month, year, day, title, tag_id, dur, time_event) values (?, ?, ?, ?, ?, ?, ?, ?)");
 
           if(!$stmt){
-              echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
+              echo json_encode(htmlentities("Query Prep Failed: %s\n", $mysqli->error));
               exit;
           }
           $stmt->bind_param('siiisiss', $_SESSION['username'], $m, $y, $d, $t, $tag, $dur, $time);         //add event info into database
@@ -104,7 +104,7 @@ if ($_POST){
               }
           }
       }
-      echo json_encode("Weekly repeating event successfully added!");
+      echo json_encode(htmlentities("Weekly repeating event successfully added!"));
   }
   else if($dur == "monthly"){
       deleteEvent($event_id);
@@ -112,7 +112,7 @@ if ($_POST){
           $stmt = $mysqli->prepare("insert into events (user_id, month, year, day, title, tag_id, dur, time_event) values (?, ?, ?, ?, ?, ?, ?, ?)");
 
           if(!$stmt){
-              echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
+              echo json_encode(htmlentities("Query Prep Failed: %s\n", $mysqli->error));
               exit;
           }
           $stmt->bind_param('siiisiss', $_SESSION['username'], $m, $y, $d, $t, $tag, $dur, $time);         //add event info into database
@@ -123,7 +123,7 @@ if ($_POST){
 
           $m = ($m + 1) % 12;
       }
-      echo json_encode("Monthly repeating event successfully added!");
+      echo json_encode(htmlentities("Monthly repeating event successfully added!"));
   }
   else if($dur == "yearly"){
       deleteEvent($event_id);
@@ -131,7 +131,7 @@ if ($_POST){
           $stmt = $mysqli->prepare("insert into events (user_id, month, year, day, title, tag_id, dur, time_event) values (?, ?, ?, ?, ?, ?, ?, ?)");
 
           if(!$stmt){
-              echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
+              echo json_encode(htmlentities("Query Prep Failed: %s\n", $mysqli->error));
               exit;
           }
           $stmt->bind_param('siiisiss', $_SESSION['username'], $m, $y, $d, $t, $tag, $dur, $time);         //add event info into database
@@ -142,7 +142,7 @@ if ($_POST){
 
           $y = $y + 1;
       }
-      echo json_encode("Yearly repeating event successfully added!");
+      echo json_encode(htmlentities("Yearly repeating event successfully added!"));
   }
   else{ //just updating a single event
 
@@ -151,7 +151,7 @@ if ($_POST){
       //$stmt = $mysqli->prepare("insert into events (user_id, month, year, day, title, tag_id, dur, time_event) values (?, ?, ?, ?, ?, ?, ?, ?)");
 
       if(!$stmt){
-          echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
+          echo json_encode(htmlentities("Query Prep Failed: %s\n", $mysqli->error));
           exit;
       }
 
@@ -162,7 +162,7 @@ if ($_POST){
 
       $stmt->close();
 
-      echo json_encode("Event successfully edited.");
+      echo json_encode(htmlentities("Event successfully edited."));
     }
   }
 

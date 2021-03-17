@@ -13,7 +13,7 @@ ini_set('display_errors', 1);
 
         $stmt = $mysqli->prepare("select user_id from users");        //go through the database list of usernames
         if(!$stmt){
-          echo json_encode("Username Query Prep Failed: %s\n", $mysqli->error);
+          echo json_encode(htmlentities("Username Query Prep Failed: %s\n", $mysqli->error));
           exit;
         }
         $stmt->execute();
@@ -26,7 +26,7 @@ ini_set('display_errors', 1);
 
                 $stmt2 = $mysqli->prepare("select hash_pass from users where user_id = (?)");   //get hashed password
                 if(!$stmt2){
-                  echo json_encode("Password Query Prep Failed: %s\n", $mysqli->error);
+                  echo json_encode(htmlentities("Password Query Prep Failed: %s\n", $mysqli->error));
                   exit;
                 }
 
@@ -38,15 +38,15 @@ ini_set('display_errors', 1);
                 if (password_verify($password,$pass)){      //check hashed pass against password inputted
                     $stmt2->close();
                     $_SESSION['token'] = bin2hex(random_bytes(32)); //generate CSRF token
-                    echo json_encode($_SESSION['username']); //user successfully verified
+                    echo json_encode(htmlentities($_SESSION['username'])); //user successfully verified
                     exit;
                 }
                 $stmt2->close();
-                echo json_encode("Password Incorrect!");
+                echo json_encode(htmlentities("Password Incorrect!"));
                 exit;
             }
         }
-        echo json_encode("Username not found!");
+        echo json_encode(htmlentities("Username not found!"));
         exit;
 
     ?>
