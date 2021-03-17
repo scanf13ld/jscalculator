@@ -1,3 +1,7 @@
+<?php
+session_start();
+ini_set('display_errors', 1);
+?>
 <!DOCTYPE html>
 <html lang=en-US>
 <head>
@@ -74,17 +78,21 @@ href= "./assets/css/styles.css">
     let len = response.length;
     $('#dayappend').append("<h2><p>"+month_word+" "+day+" "+year+" </p></h2>");
     if (len == 0){
-      $('#dayappend').append("<p>No events today!</p>");
+        $('#dayappend').append("<p>No events today!</p>");
     } else {
-      for (let i=0; i < len; i++){
-        let event_id = response[i].event_id;
-        let title = response[i].title;
-        let tag_id = response[i].tag_id;
-        if (tag_id==undefined){
-          tag_id = 4;
+      if (currentUser == "guest"){
+        $('#dayappend').append("<p>"+response+"</p>");
+      } else {
+        for (let i=0; i < len; i++){
+          let event_id = response[i].event_id;
+          let title = response[i].title;
+          let tag_id = response[i].tag_id;
+          if (tag_id==undefined){
+            tag_id = 4;
+          }
+          let icon = icons[tag_id];
+          $('#dayappend').append("<p>"+title+"</p><button id=edit_'+tag_id+'>Edit</button><button id=delete_'+tag_id+'>Delete</button>");
         }
-        let icon = icons[tag_id];
-        $('#dayappend').append("<p>"+title+"</p>");
       }
     }
     //$('#dayappend').append("<div class=newdate><button id='new_event_btn_2'>New Event</button></div>");
@@ -105,6 +113,10 @@ href= "./assets/css/styles.css">
     Login:<input type = text id=username placeholder='Username'><input type = password id=password placeholder='Password'><button id='login'>Log in</button>
 
     New User:<input type = text id=new_username placeholder='Username'><input type = password id=new_password placeholder='Password'><button id='register'>Register</button>
+
+    <div class=welcome>
+      <h4 id=welcomealert></h4>
+    </div>
 
     <p id="login_messages"></p>
 
@@ -129,6 +141,8 @@ href= "./assets/css/styles.css">
         </thead>
         <tbody>
           <script>
+
+            let currentUser = '<?php if (isset($_SESSION['username'])){ echo $_SESSION['username'];}else{echo 'guest';}?>';
             let currentMonth = new Month(2021, 2);
 
             let weekdays = {
@@ -148,6 +162,22 @@ href= "./assets/css/styles.css">
                 //let currentMonth = new Month(2021, 2); // March 2021
                 let weeks = currentMonth.getWeeks();
                 //alert(currentMonth.month);
+                //alert('</?php echo $_SESSION['username']?>');
+                $("#welcomealert").append('<p>Welcome:'+currentUser+' </p>');
+                if (currentUser != 'guest'){
+                  $("#welcomealert").append("<p><button id=logout>Log Out</button><p>");
+                  logout = document.getElementById("logout");
+                  logout.onclick = function(){
+                      logoutUser();
+                      currentUser = 'guest';
+                      document.getElementById("new_event_btn").style.display = "none";
+                      document.getElementById("newevent").style.display = "none";
+                      logout.remove();
+                      updateCalendar(currentMonth); //updates Calendar
+                      document.getElementById("login_messages").innerHTML = "Logout Successful";
+                    }
+                }
+
                 $("#calendarmonth").append('<p>Current Month: '+months[currentMonth.month]+' '+currentMonth.year+'</p>');
 
                 let date_num = 1;
@@ -168,9 +198,12 @@ href= "./assets/css/styles.css">
                 }
             }
             function initializeCalendar(){
+              let currentMonth = new Month(2021, 2);
+              if (currentUser == 'guest'){
                 document.getElementById("new_event_btn").style.display = "none";
-                let currentMonth = new Month(2021, 2);
-                populateCalendar(currentMonth);
+              }
+              populateCalendar(currentMonth);
+              populateEvents();
             }
 
             function updateCalendar(currentMonth){
@@ -178,9 +211,27 @@ href= "./assets/css/styles.css">
               $("table tbody").find("td").remove();
               $("table tbody").find("tr").remove();
               $("#calendarmonth").find("p").remove();
+              $("#welcomealert").find("p").remove();
               populateCalendar(currentMonth);
               populateEvents();
             }
+
+            function logoutUser(){
+              $.ajax({    //create an ajax request to display.php
+              type: 'POST',
+              dataType:'json',
+              url: 'logout.php',
+              //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
+              success: function(response){
+                  console.log(response);
+                  updateCalendar(currentMonth);
+              }
+              });
+            }
+
+            //function setNewSession(username){
+
+            //}
 
             // Change the month when the "next" button is pressed
             document.addEventListener("DOMContentLoaded", initializeCalendar, false);
@@ -189,6 +240,7 @@ href= "./assets/css/styles.css">
           document.getElementById("next_month_btn").addEventListener("click", function(event){
               currentMonth = currentMonth.nextMonth();
               updateCalendar(currentMonth);
+              //alert("The new month is "+currentMonth.month+" "+currentMonth.year);
 
           }, false);
 
@@ -196,6 +248,7 @@ href= "./assets/css/styles.css">
           document.getElementById("prev_month_btn").addEventListener("click", function(event){
               currentMonth = currentMonth.prevMonth();
               updateCalendar(currentMonth);
+              //alert("The new month is "+currentMonth.month+" "+currentMonth.year);
           }, false);
 
           document.getElementById("register").addEventListener("click", function(event){
@@ -210,6 +263,7 @@ href= "./assets/css/styles.css">
                 data: data,
                 //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
               success: function(response){
+
                   console.log(response);
                   document.getElementById("login_messages").innerHTML = "New User Added! Log in to start adding events.";
                   //fillDisplay(response,day,month,year);
@@ -223,6 +277,7 @@ href= "./assets/css/styles.css">
             let user = document.getElementById("username").value;
             let pass = document.getElementById("password").value;
             let data = { "username": user, "password": pass};
+            //alert('</?php echo $_SESSION['username']?>');
             $.ajax({    //create an ajax request to display.php
                 type: 'POST',
                 dataType:'json',
@@ -230,6 +285,9 @@ href= "./assets/css/styles.css">
                 data: data,
                 //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
               success: function(response){
+                  currentUser = response;
+                  //setNewSession(response);
+                  //alert('</?php echo $_SESSION['username']?>');
                   console.log(response);
                   updateCalendar(currentMonth);
                   document.getElementById("login_messages").innerHTML = "Login Successful";
@@ -249,6 +307,7 @@ href= "./assets/css/styles.css">
     <div id="dayappend" class="popup-content">
       <span class="close">&times;</span>
 
+
     </div>
 
     <script>
@@ -257,6 +316,7 @@ href= "./assets/css/styles.css">
         span.onclick = function() {
           popup.style.display = "none";
           $('#dayappend').find('p').remove();
+          $('#dayappend').find('button').remove();
         }
     </script>
 
@@ -267,7 +327,7 @@ href= "./assets/css/styles.css">
   </div>
 
     <div id=newevent class="newdate" style="display:none;"> <!-- Pop-Up For New Event -->
-        Title:<input type="text" id = "title"/><br>
+        Title:<input type="text" id= "title" name = "title"/><br>
         Date: <input type="time" id="time" placeholder=Time/>
         <input type="number" id="month" placeholder=Month/>
         <input type="number" id="day" placeholder=Day/>
@@ -303,42 +363,44 @@ href= "./assets/css/styles.css">
       }, false);
 
       document.getElementById("create").addEventListener("click", function(event){
-        let time = document.getElementById("time").value;
-        let m = document.getElementById("month").value;
-        let d = document.getElementById("day").value;
-        let y = document.getElementById("year").value;
-        let t = document.getElementById("title").value;
-        let nr = document.getElementById("num_repeats").value;
-        if (m == null || d == null || y == null || t == null || time == null){
-            //print message that says you must put in a title, date, time
-        }
-        let tag_ptrs = document.getElementsByName("tag");
-        let which_tag = null;
-        for (let i=0; i<tag_ptrs.length; ++i){
-            if(tag_ptrs[i].checked){
+          let time = document.getElementById("time").value;
+          let m = document.getElementById("month").value;
+          let d = document.getElementById("day").value;
+          let y = document.getElementById("year").value;
+          let t = document.getElementById("title").value;
+          let nr = document.getElementById("num_repeats").value;
+          if (m == null || d == null || y == null || t == null || time == null){
+              //print message that says you must put in a title, date, time
+          }
+          let tag_ptrs = document.getElementsByName("tag");
+          let which_tag = null;
+          for (let i=0; i<tag_ptrs.length; ++i){
+              if(tag_ptrs[i].checked){
                 which_tag = tag_ptrs[i].value;
                 break;
+              }
+          }
+          let dur_ptrs = document.getElementsByName("duration");
+          let dur = null;
+          for (let i=0; i<dur_ptrs.length; ++i){
+              if(dur_ptrs[i].checked){
+                dur = dur_ptrs[i].value;
+                break;
+              }
+          }
+          const data = {'time': time, 'month': m, 'day': d, 'year': y, 'title': t, 'tag': which_tag, 'duration': dur, 'num_repeats': nr};
+            $.ajax({    //create an ajax request to display.php
+            type: 'POST',
+            dataType:'json',
+            url: 'newEvent.php',
+            data: data,
+            //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
+            success: function(response){
+
+                console.log(response);
+                updateCalendar(currentMonth);
             }
-        }
-        let dur_ptrs = document.getElementsByName("duration");
-        let dur = null;
-        for (let i=0; i<dur_ptrs.length; ++i){
-            if(dur_ptrs[i].checked){
-            dur = dur_ptrs[i].value;
-            break;
-            }
-        }
-        const data = {'time': time, 'month': m, 'day': d, 'year': y, 'title': t, 'tag': which_tag, 'duration': dur, 'num_repeats': nr};
-        $.ajax({    //create an ajax request to display.php
-        type: 'POST',
-        dataType:'json',
-        url: 'newEvent.php',
-        data: data,
-        success: function(response){
-            console.log(response);
-            updateCalendar(currentMonth);
-        }
-    });
+	    });
       }, false);
 
       </script>

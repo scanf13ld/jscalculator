@@ -4,7 +4,7 @@ session_start();
 ini_set('display_errors', 1);
 ?>
 
-<?php    
+<?php
     $time = $mysqli->real_escape_string($_POST['time']);
     $m = $mysqli->real_escape_string($_POST['month']) - 1;
     $d = $mysqli->real_escape_string($_POST['day']);
@@ -17,7 +17,7 @@ ini_set('display_errors', 1);
     if($m < 0 || $m > 11){
         echo json_encode("Please enter a valid month.");
     }
-    
+
     if($m == 1 && ($d > 28 || $d < 0)){
         echo json_encode("That date does not exist.");
     }
@@ -36,15 +36,15 @@ ini_set('display_errors', 1);
     if($dur == "weekly"){
         for($i = 0; $i<$num_repeats; $i++){
             $stmt = $mysqli->prepare("insert into events (user_id, month, year, day, title, tag_id, dur, time) values (?, ?, ?, ?, ?, ?, ?, ?)");
-    
+
             if(!$stmt){
                 echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
                 exit;
             }
             $stmt->bind_param('siiisiss', $_SESSION['username'], $m, $y, $d, $t, $tag, $dur, $time);         //add event info into database
-        
+
             $stmt->execute();
-        
+
             $stmt->close();
 
             if($m == 3 || $m == 5 || $m == 8 || $m == 10){              //months with 30 days
@@ -76,59 +76,59 @@ ini_set('display_errors', 1);
                 else{
                     $d = $d + 7;
                 }
-            }  
+            }
         }
-        echo json_encode("Weekly repeating event successfully added!");  
+        echo json_encode("Weekly repeating event successfully added!");
     }
     else if($dur == "monthly"){
         for($i = 0; $i<$num_repeats; $i++){
             $stmt = $mysqli->prepare("insert into events (user_id, month, year, day, title, tag_id, dur, time) values (?, ?, ?, ?, ?, ?, ?, ?)");
-    
+
             if(!$stmt){
                 echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
                 exit;
             }
             $stmt->bind_param('siiisiss', $_SESSION['username'], $m, $y, $d, $t, $tag, $dur, $time);         //add event info into database
-        
+
             $stmt->execute();
-        
+
             $stmt->close();
 
             $m = ($m + 1) % 12;
         }
-        echo json_encode("Monthly repeating event successfully added!");    
+        echo json_encode("Monthly repeating event successfully added!");
     }
     else if($dur == "yearly"){
         for($i = 0; $i<$num_repeats; $i++){
             $stmt = $mysqli->prepare("insert into events (user_id, month, year, day, title, tag_id, dur, time) values (?, ?, ?, ?, ?, ?, ?, ?)");
-    
+
             if(!$stmt){
                 echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
                 exit;
             }
             $stmt->bind_param('siiisiss', $_SESSION['username'], $m, $y, $d, $t, $tag, $dur, $time);         //add event info into database
-        
+
             $stmt->execute();
-        
+
             $stmt->close();
 
             $y = $y + 1;
         }
-        echo json_encode("Yearly repeating event successfully added!");    
+        echo json_encode("Yearly repeating event successfully added!");
     }
     else{                               //dur = once or null
         $stmt = $mysqli->prepare("insert into events (user_id, month, year, day, title, tag_id, dur, time) values (?, ?, ?, ?, ?, ?, ?, ?)");
-    
+
         if(!$stmt){
             echo json_encode("Query Prep Failed: %s\n", $mysqli->error);
             exit;
         }
         $stmt->bind_param('siiisiss', $_SESSION['username'], $m, $y, $d, $t, $tag, $dur, $time);         //add event info into database
-    
+
         $stmt->execute();
-    
+
         $stmt->close();
-    
-        echo json_encode("Event successfully added!");    
+
+        echo json_encode("Event successfully added!");
     }
 ?>
