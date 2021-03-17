@@ -46,8 +46,8 @@ let months = ['January','February','March','April','May','June','July','August',
         $('.'+icon_class).show();
       } else{
         let icon_class = $(this).attr("id");
-        alert("hiding "+icon_class);
-        alert('.'+icon_class);
+        //alert("hiding "+icon_class);
+        //alert('.'+icon_class);
         $('.'+icon_class).hide(); //hide elements - not working
       }
 
@@ -185,6 +185,7 @@ let months = ['January','February','March','April','May','June','July','August',
       let weeks = currentMonth.getWeeks();
       $("#welcomealert").append('<p>Welcome:'+currentUser+' </p>');
       if (currentUser != 'guest'){
+        document.getElementById("filter").style.display = "block";
         $("#welcomealert").append("<p><button id=logout>Log Out</button><p>");
         logout = document.getElementById("logout");
         logout.onclick = function(){
@@ -492,11 +493,11 @@ let months = ['January','February','March','April','May','June','July','August',
 
       <div id=filter style="display:none;">
         <p>
-        Show: <input type="checkbox" id="fas fa-building" checked/>Work
-        <input type="checkbox" id="fas fa-school" checked/>School
-        <input type="checkbox" id="fas fa-home" checked/>Family
-        <input type="checkbox" id="fas fa-birthday-cake" checked/>Brithday
-        <input type="checkbox" id="fas fa-asterisk" checked/>Misc
+        Show: <input type="checkbox" id="fa-building" checked/>Work
+        <input type="checkbox" id="fa-school" checked/>School
+        <input type="checkbox" id="fa-home" checked/>Family
+        <input type="checkbox" id="fa-birthday-cake" checked/>Brithday
+        <input type="checkbox" id="fa-asterisk" checked/>Misc
         </p>
       </div>
 
