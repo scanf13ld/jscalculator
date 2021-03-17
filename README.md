@@ -7,14 +7,18 @@ Calendar Site: http://ec2-3-141-13-226.us-east-2.compute.amazonaws.com/module5gr
 
 Creative Portion:
 
-1. share calendar
+1. Share calendar:
+
    Users are able to share their calendar with a user. Doing so will add all their events to the person who they shared with's calendar.
    
-2. repeating events
+2. Repeating events:
+
    A user may create an event that repeats weekly, monthly, or yearly. They may specify how many times it should repeat (including the first instance of itself).
    
-3. icon tags
+3. Icon tags:
+
    We added tags for each event. Each tag is associated with an icon that displays on the day of the event.
    
-4. popup window for day
+4. Popup window for day:
+
    We dedcided to mimic the apple calendar app and just display some sort of indication that there is an event on a certain day (in our case an icon per event), and the user may   click on each day to see a popup window detailing the events for the day.
