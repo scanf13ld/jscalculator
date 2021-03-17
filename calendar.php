@@ -365,10 +365,10 @@ let months = ['January','February','March','April','May','June','July','August',
         dataType:'json',
         url: 'newEvent.php',
         data: data,
-        //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
         success: function(response){
 
             console.log(response);
+	    document.getElementById("new_event_msg").innerHTML = response;
             updateCalendar(currentMonth);
         }
   });
@@ -411,7 +411,6 @@ let months = ['January','February','March','April','May','June','July','August',
       dataType:'json',
       url: 'editevent.php',
       data: data,
-      //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
       success: function(response){
 
           console.log(response);
@@ -559,6 +558,7 @@ let months = ['January','February','March','April','May','June','July','August',
   <div class=newdate>
     <button id='new_event_btn'>New Event</button>
   </div>
+  <p id='new_event_msg'></p>
 
     <div id=newevent class="newdate" style="display:none;"> <!-- Pop-Up For New Event -->
         Title:<input type="text" id= "title" name = "title"/><br>
