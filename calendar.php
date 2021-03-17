@@ -103,6 +103,15 @@ href= "./assets/css/styles.css">
     return months[month];
   }
 
+  function showIcons(){
+    let w = document.getElementById("work").value;
+    let s = document.getElementById("school").value;
+    let f = document.getElementById("family").value;
+    let b = document.getElementById("birthday").value;
+    let m = document.getElementById("misc").value;
+
+  }
+
 
 </script>
 </head>
@@ -113,6 +122,10 @@ href= "./assets/css/styles.css">
     Login:<input type = text id=username placeholder='Username'><input type = password id=password placeholder='Password'><button id='login'>Log in</button>
 
     New User:<input type = text id=new_username placeholder='Username'><input type = password id=new_password placeholder='Password'><button id='register'>Register</button>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;
+
+    Share with:<input type = text id="share_with" placeholder='Enter username'/><button id='share'>Share</button>
 
     <div class=welcome>
       <h4 id=welcomealert></h4>
@@ -126,6 +139,13 @@ href= "./assets/css/styles.css">
       <p><button id='prev_month_btn'>Previous Month</button>
       <button id='next_month_btn'>Next Month</button></p>
       <br>
+      <p>
+      Show: <input type="checkbox" id="work" checked/>Work
+      <input type="checkbox" id="school" checked/>School
+      <input type="checkbox" id="family" checked/>Family
+      <input type="checkbox" id="birthday" checked/>Brithday
+      <input type="checkbox" id="misc" checked/>Misc
+      </p>
 
       <table id=Calendar style="border: 1px solid black;">
         <thead>
@@ -163,7 +183,7 @@ href= "./assets/css/styles.css">
                 let weeks = currentMonth.getWeeks();
                 //alert(currentMonth.month);
                 //alert('</?php echo $_SESSION['username']?>');
-                $("#welcomealert").append('<p>Welcome:'+currentUser+' </p>');
+                $("#welcomealert").append('<p>Welcome: '+currentUser+' </p>');
                 if (currentUser != 'guest'){
                   $("#welcomealert").append("<p><button id=logout>Log Out</button><p>");
                   logout = document.getElementById("logout");
@@ -298,6 +318,24 @@ href= "./assets/css/styles.css">
               });
           }, false);
 
+          document.getElementById("share").addEventListener("click",function(event){
+              let shared_to = document.getElementById("share_with").value;
+              if(shared_to == null){
+                  //print something
+              }
+              data = {'shared_to': shared_to}
+              $.ajax({
+                  type: 'POST',
+                  dataType:'json',
+                  url: 'addShare.php',
+                  data: data,
+                success: function(response){
+                    console.log(response);
+                    document.getElementById("login_messages").innerHTML = response;
+                }
+              });
+          }, false);
+
           </script>
         </tbody>
       </table>
@@ -334,18 +372,18 @@ href= "./assets/css/styles.css">
         <input type="number" id="year" placeholder=Year/><br>
         Tag:<br>
         <input type="hidden" name="token" value="<?php echo $_SESSION['token'];?>"/>
-        <input type="radio" name="tag" value="2" id="work" /><label for="work">Work</label><br>
-        <input type="radio" name="tag" value="0" id="school" /><label for="school">School</label><br>
-        <input type="radio" name="tag" value="1" id="family" /><label for="family">Family</label><br>
-        <input type="radio" name="tag" value="3" id="birthday" /><label for="birthday">Birthday</label><br>
-        <input type="radio" name="tag" value="4" id="misc" /><label for="misc">Misc</label><br>
+        <input type="radio" name="tag" value="2" />Work<br>
+        <input type="radio" name="tag" value="0" />School<br>
+        <input type="radio" name="tag" value="1" />Family<br>
+        <input type="radio" name="tag" value="3" />Birthday<br>
+        <input type="radio" name="tag" value="4" />Misc<br>
 
         Repeat:<br>
         <input type="radio" name="duration" value="once" id="once" /><label for="once">Just this once</label><br>
         <input type="radio" name="duration" value="weekly" id="weekly" /><label for="weekly">Weekly</label><br>
         <input type="radio" name="duration" value="monthly" id="monthly" /><label for="monthly">Monthly</label><br>
         <input type="radio" name="duration" value="yearly" id="yearly" /><label for="yearly">Yearly</label><br>
-        Repeat <input type="number" id="num_repeats"/> times
+        Repeat <input type="number" id="num_repeats"/> times<br>
 
         <button id='create'>Add</button>
         <button id='cancel'>Cancel</button>
