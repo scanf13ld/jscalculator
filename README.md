@@ -3,7 +3,7 @@ Laura Bucchieri 473141 laurabucchieri
 
 Shane Canfield 491457 scanf13ld
 
-Calendar Site: http://ec2-3-141-13-226.us-east-2.compute.amazonaws.com/module5group/calendar.php
+Calendar Site: http://ec2-3-21-93-122.us-east-2.compute.amazonaws.com/Calendar/calendar.php
 
 Creative Portion:
 
