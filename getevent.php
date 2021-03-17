@@ -1,44 +1,26 @@
 <?php
 require 'database.php'; //returns $mysqli which can be used in mysqli_query commands
+ini_set("session.cookie_httponly", 1);
 session_start();
-if (empty($_SESSION['token'])) {
-    $_SESSION['token'] = bin2hex(random_bytes(32));
-}
 ini_set('display_errors', 1);
 
 
-$user_id = $_SESSION["username"];
+$user_id = $_SESSION['username'];
 
-$output_arr = array();
+if ($user_id == "guest"){
+  echo json_encode("Please sign in to make a new event!");
 
-$from_arr = array();
-
-$sql = "SELECT from_id FROM share WHERE to_id='". $user_id ."'";
-
-$result = mysqli_query($mysqli, $sql);
-
-while($row = mysqli_fetch_assoc($result)) {
-  $from_arr[] = array("from_id" => $row['from_id']);
 }
 
-if ($_POST){
-  $day = $_POST['day_ajax'];
-  $month = $_POST['month_ajax'];
-  $year = $_POST['year_ajax'];
+else{
+  $output_arr = array();
 
-  $sql = "SELECT event_id, title, tag_id, user_id, time, dur FROM events WHERE day='". $day ."' AND month='". $month ."' AND year='". $year ."' AND user_id='". $user_id ."'";
-  $result = mysqli_query($mysqli, $sql);
-  while($row = mysqli_fetch_assoc($result)) {
+  if ($_POST){
+    $day = $_POST['day_ajax'];
+    $month = $_POST['month_ajax'];
+    $year = $_POST['year_ajax'];
 
-    $output_arr[] = array("event_id" => $row['event_id'],
-    "user_id" => $row['user_id'],
-    "title" => $row['title'],
-    "tag_id" => $row['tag_id'],
-    "dur" => $row['dur'],
-    "time" => $row['time']);
-  }
-  for($i=0; $i<count($from_arr); $i++){
-    $sql = "SELECT event_id, title, tag_id, user_id, time, dur FROM events WHERE day='". $day ."' AND month='". $month ."' AND year='". $year ."' AND user_id='". $from_arr[$i] ."'";
+    $sql = "SELECT event_id, title, tag_id, user_id, time_event, dur FROM events WHERE day='". $day ."' AND month='". $month ."' AND year='". $year ."' AND user_id='". $user_id ."'";
     $result = mysqli_query($mysqli, $sql);
     while($row = mysqli_fetch_assoc($result)) {
 
@@ -47,33 +29,30 @@ if ($_POST){
       "title" => $row['title'],
       "tag_id" => $row['tag_id'],
       "dur" => $row['dur'],
-      "time" => $row['time']);
+      "time" => $row['time_event']);
+    }
+
+    $sql = "SELECT from_id FROM share WHERE to_id='". $user_id ."'";
+    $result = mysqli_query($mysqli, $sql);
+    while($row = mysqli_fetch_assoc($result)) {
+      $from_id = $row['from_id'];
+      $sql = "SELECT event_id, title, tag_id, user_id, time_event, dur FROM events WHERE day='". $day ."' AND month='". $month ."' AND year='". $year ."' AND user_id='". $from_id ."'";
+      $result = mysqli_query($mysqli, $sql);
+      while($row = mysqli_fetch_assoc($result)) {
+        $output_arr[] = array("event_id" => $row['event_id'],
+        "user_id" => $row['user_id'],
+        "title" => $row['title'],
+        "tag_id" => $row['tag_id'],
+        "dur" => $row['dur'],
+        "time" => $row['time_event']);
+      }
     }
   }
-}
 
-else{ //populating icons
-  $sql = "SELECT event_id, user_id, month, year, day, title, tag_id FROM events WHERE user_id='". $user_id ."'";
-  $result = mysqli_query($mysqli, $sql);
-
-  while($row = mysqli_fetch_assoc($result)) {
-
-    $output_arr[] = array("event_id" => $row['event_id'],
-    "user_id" => $row['user_id'],
-    "year" => $row['year'],
-    "month" => $row['month'],
-    "day" => $row['day'],
-    "title" => $row['title'],
-    "tag_id" => $row['tag_id']);
-  }
-  for($i=0; $i<count($from_arr); $i++){
-    echo($from_arr[$i]);
-    $sql = "SELECT event_id, user_id, month, year, day, title, tag_id FROM events WHERE user_id='". $from_arr[$i] ."'";
+  else{ //populating icons
+    $sql = "SELECT event_id, user_id, month, year, day, title, tag_id FROM events WHERE user_id='". $user_id ."'";
     $result = mysqli_query($mysqli, $sql);
-    echo(mysqli_fetch_assoc($result));
-    
     while($row = mysqli_fetch_assoc($result)) {
-      echo json_encode("inside while");
       $output_arr[] = array("event_id" => $row['event_id'],
       "user_id" => $row['user_id'],
       "year" => $row['year'],
@@ -83,11 +62,31 @@ else{ //populating icons
       "tag_id" => $row['tag_id']);
     }
 
-    echo("after while");
+    $sql = "SELECT from_id FROM share WHERE to_id='". $user_id ."'";
+
+    $result = mysqli_query($mysqli, $sql);
+
+    while($row = mysqli_fetch_assoc($result)) {
+      $from_id = $row['from_id'];
+      $sql = "SELECT event_id, user_id, month, year, day, title, tag_id FROM events WHERE user_id='". $from_id ."'";
+
+      $result = mysqli_query($mysqli, $sql);
+      while($row = mysqli_fetch_assoc($result)) {
+        $output_arr[] = array("event_id" => $row['event_id'],
+        "user_id" => $row['user_id'],
+        "year" => $row['year'],
+        "month" => $row['month'],
+        "day" => $row['day'],
+        "title" => $row['title'],
+        "tag_id" => $row['tag_id']);
+      }
+    }
+
   }
+  echo json_encode($output_arr);
 
 }
-echo json_encode($output_arr);
+
 
 
 ?>
