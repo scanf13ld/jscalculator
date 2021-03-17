@@ -21,15 +21,15 @@ ini_set('display_errors', 1);
     $num_repeats = $_POST['num_repeats'];                       //doesn't have to be injection resistant bc it's not going in database
 
     if ($m == null || $d == null || $y == null || $t == null || $time == null){
-        echo htmlentities(json_encode("You must enter a title, month, day, year, and time."));
+        echo json_encode("You must enter a title, month, day, year, and time.");
     }
 
     if($m < 0 || $m > 11){
-        echo htmlentities(json_encode("Please enter a valid month."));
+        echo json_encode("Please enter a valid month.");
     }
 
     if($m == 1 && ($d > 28 || $d < 0)){
-        echo htmlentities(json_encode("That date does not exist."));
+        echo json_encode("That date does not exist.");
     }
 
     if($m == 3 || $m == 5 || $m == 8 || $m == 10){              //months with 30 days
