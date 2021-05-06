@@ -17,6 +17,7 @@ href= "./assets/css/styles.css">
 
 
 let currentUser = '<?php if (isset($_SESSION['username'])){ echo htmlentities($_SESSION['username']);}else{echo 'guest';}?>';
+let currentToken = '<?php if (isset($_SESSION['token'])){ echo htmlentities($_SESSION['token']);}else{echo 'null';}?>';
 let currentMonth = new Month(2021, 2);
 
 let weekdays = {
@@ -162,7 +163,7 @@ let months = ['January','February','March','April','May','June','July','August',
         type: 'POST',
         dataType:'json',
         url: 'deleteevent.php',
-        data: {"event_id":event_id,"token":'<?php if (isset($_SESSION['token'])){ echo htmlentities($_SESSION['token']);}else{echo 'null';}?>'},
+        data: { "event_id": event_id, "token":currentToken},
         //'user_id': </?php echo $_SESSION['id']; ?>; we'll need this
       success: function(response){
           console.log(response);
@@ -304,12 +305,22 @@ let months = ['January','February','March','April','May','June','July','August',
         url: 'verifyaccount.php',
         data: data,
       success: function(response){
-          currentUser = response;
+          if (response == "Username not found!"){
+              currentUser = "guest";
+            alert("user not found");
+          } else{
+            currentUser = response["username"];
+            currentToken = response["token"];
+            $('#token1').value = currentToken;
+            $('#token2').value = currentToken;
+            document.getElementById("login_messages").innerHTML = "Login Successful";
+            document.getElementById("new_event_btn").style.display = "block";
+            document.getElementById("filter").style.display = "block";
+            document.getElementById("share").style.display = "block";
+          }
           console.log(response);
           updateCalendar(currentMonth);
-          document.getElementById("login_messages").innerHTML = "Login Successful";
-          document.getElementById("new_event_btn").style.display = "block";
-          document.getElementById("filter").style.display = "block";
+
         }
 
       });
@@ -358,7 +369,7 @@ let months = ['January','February','March','April','May','June','July','August',
             break;
           }
       }
-      const data = {"token":'<?php if (isset($_SESSION['token'])){ echo htmlentities($_SESSION['token']);}else{echo 'null';}?>', 'time': time, 'month': m, 'day': d, 'year': y, 'title': t, 'tag': which_tag, 'duration': dur, 'num_repeats': nr};
+      let data = {"token":currentToken, 'time': time, 'month': m, 'day': d, 'year': y, 'title': t, 'tag': which_tag, 'duration': dur, 'num_repeats': nr};
         $.ajax({    //create an ajax request to display.php
         type: 'POST',
         dataType:'json',
@@ -400,7 +411,8 @@ let months = ['January','February','March','April','May','June','July','August',
           break;
         }
     }
-    const data = {'token':'<?php if (isset($_SESSION['token'])){ echo htmlentities($_SESSION['token']);}else{echo 'null';}?>', 'event_id':event_id, 'time': time_edit, 'month': m_edit, 'day': d_edit, 'year': y_edit, 'title': t_edit, 'tag': which_tag_edit, 'duration': dur_edit, 'num_repeats': nr_edit};
+    let data = {'token':currentToken, 'event_id':event_id, 'time': time_edit, 'month': m_edit, 'day': d_edit, 'year': y_edit, 'title': t_edit, 'tag': which_tag_edit, 'duration': dur_edit, 'num_repeats': nr_edit};
+    alert(data['token']);
       $.ajax({    //create an ajax request to display.php
       type: 'POST',
       dataType:'json',
@@ -464,8 +476,8 @@ let months = ['January','February','March','April','May','June','July','August',
       New User:<input type = text id=new_username placeholder='Username'><input type = password id=new_password placeholder='Password'><button id='register'>Register</button>
 
     </div>
-    <div class="column">
-      Share with:<input type = text id="share_with" placeholder='Enter username'/><button id='share'>Share</button>
+    <div class="column" id=share style="display:none;">
+      Share with:<input type = text id="share_with" placeholder='Enter username' /><button id='share'>Share</button>
 
     </div>
   </div>
@@ -528,7 +540,7 @@ let months = ['January','February','March','April','May','June','July','August',
           <input type="number" id="day_edit" placeholder=Day>
           <input type="number" id="year_edit" placeholder=Year><br>
           Tag:<br>
-          <input type="hidden" name="token" value="<?php echo htmlentities($_SESSION['token']);?>"/>
+          <input type="hidden" name="token" id=token2 value=""/>
           <input type="radio" name="tag_edit" value="2" id="work_edit" /><label for="work">Work</label><br>
           <input type="radio" name="tag_edit" value="0" id="school_edit" /><label for="school">School</label><br>
           <input type="radio" name="tag_edit" value="1" id="family_edit" /><label for="family">Family</label><br>
@@ -565,7 +577,7 @@ let months = ['January','February','March','April','May','June','July','August',
         <input type="number" id="day" placeholder=Day/>
         <input type="number" id="year" placeholder=Year/><br>
         Tag:<br>
-        <input type="hidden" name="token" value="<?php echo htmlentities($_SESSION['token']);?>"/>
+        <input type="hidden" id="token1" name="token" value=""/>
         <input type="radio" name="tag" value="2" id="work" /><label for="work">Work</label><br>
         <input type="radio" name="tag" value="0" id="school" /><label for="school">School</label><br>
         <input type="radio" name="tag" value="1" id="family" /><label for="family">Family</label><br>
